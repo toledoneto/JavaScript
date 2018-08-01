@@ -69,6 +69,34 @@ class Db
 
 	}
 
+	// busca tds os registros no LS para mostrar na tela de cosulta
+	fetchAll()
+	{
+
+		// array de despesas
+		let expenses = Array();
+
+		// recupera o último id registrado que está salvo no param id
+		let id = localStorage.getItem('id');
+
+		// recupera tds despesas salvas
+		for(let i = 1 ; i <= id ; i++)
+		{
+
+			// recuperando as despesas no formato JSON e convertendo pra obj literal
+			let expense = JSON.parse(localStorage.getItem(i));
+
+			// verificando índices removidos e pulando-os
+			if (expense === null) continue;
+
+			expenses.push(expense);
+
+		}
+
+		return expenses;
+
+	}
+
 }
 
 let db = new Db();
@@ -100,6 +128,13 @@ function createExpense()
 		// um pouco de JQuery caso não haja erro no preenchimento do form
 		$('#modalRegisterExpense').modal('show');
 
+		year.value = '';
+		month.value = '';
+		day.value = '';
+		typeOf.value = '';
+		description.value = '';
+		cost.value = '';
+
 	} else {
 
 		document.getElementById('modalTitle').innerHTML = 'Erro no cadastro!';
@@ -112,6 +147,51 @@ function createExpense()
 		$('#modalRegisterExpense').modal('show');
 
 	};
+
+}
+
+function showListExpenses()
+{
+
+	// array de despesas
+	let expenses = Array();
+
+	expenses = db.fetchAll();
+
+	let expenseList = document.getElementById('expenseList');
+
+	// percorrendo o array depesas e colocando de forma dinâmica no HTML
+	expenses.forEach(function(expense){
+
+		// cria a linha
+		let row = expenseList.insertRow();
+
+		// cria a coluna
+		row.insertCell(0).innerHTML = `${expense.day}/${expense.month}/${expense.year}`;
+		
+		switch (expense.typeOf) {
+			case '1':
+				expense.typeOf = 'Alimentação';
+				break;
+			case '2':
+				expense.typeOf = 'Educação';
+				break;
+			case '3':
+				expense.typeOf = 'Lazer';
+				break;
+			case '4':
+				expense.typeOf = 'Saúde';
+				break;
+			case '5':
+				expense.typeOf = 'Transporte';
+				break;
+		}
+
+		row.insertCell(1).innerHTML = expense.typeOf;
+		row.insertCell(2).innerHTML = expense.description;
+		row.insertCell(3).innerHTML = expense.cost;
+
+	});
 
 }
 
