@@ -97,6 +97,30 @@ class Db
 
 	}
 
+	// faz a procura de despesas com base nos param passados na pag consulta
+	search(expense)
+	{
+
+		let filteredExpenses = Array();
+
+		filteredExpenses = this.fetchAll();
+
+		if (expense.year != '') filteredExpenses = filteredExpenses.filter( exp => exp.year == expense.year);
+
+		if (expense.month != '') filteredExpenses = filteredExpenses.filter( exp => exp.month == expense.month);
+
+		if (expense.day != '') filteredExpenses = filteredExpenses.filter( exp => exp.day == expense.day);
+
+		if (expense.typeOf != '') filteredExpenses = filteredExpenses.filter( exp => exp.typeOf == expense.typeOf);
+
+		if (expense.description != '') filteredExpenses = filteredExpenses.filter( exp => exp.description == expense.description);
+
+		if (expense.cost != '') filteredExpenses = filteredExpenses.filter( exp => exp.cost == expense.cost);
+
+		return filteredExpenses;
+
+	}
+
 }
 
 let db = new Db();
@@ -150,15 +174,18 @@ function createExpense()
 
 }
 
-function showListExpenses()
+function showListExpenses(expenses = Array(), filter = false)
 {
 
-	// array de despesas
-	let expenses = Array();
-
-	expenses = db.fetchAll();
+	// verificando se o tamanho do array passado como param é zero, ou seja,
+	// se a função foi chamada pelo on load da pag consulta.html, o que
+	// faz que seja necessário retornar todas as entradas do LS
+	if (expenses.length == 0 && filter == false) expenses = db.fetchAll();
 
 	let expenseList = document.getElementById('expenseList');
+
+	// limpa a tabela existente para mostrar a nova busca
+	expenseList.innerHTML = '';
 
 	// percorrendo o array depesas e colocando de forma dinâmica no HTML
 	expenses.forEach(function(expense){
@@ -192,6 +219,28 @@ function showListExpenses()
 		row.insertCell(3).innerHTML = expense.cost;
 
 	});
+
+}
+
+// busca as despesas que foram solicitadas através do buscar na pag consulta
+function fetchExpense()
+{
+
+	let year = document.getElementById('ano').value;
+	let month = document.getElementById('mes').value;
+	let day = document.getElementById('dia').value;
+	let typeOf = document.getElementById('tipo').value;
+	let description = document.getElementById('descricao').value;
+	let cost = document.getElementById('valor').value; 
+
+	let expense =  new Expense(year, month, day, 
+								typeOf, description, cost);
+
+	let expenses = db.search(expense);
+
+	// mostra os intens pesquisados e, pelo param true, não retornada nada caso
+	// não haja uma entrada com os dados pesquisados
+	showListExpenses(expenses, true);
 
 }
 
