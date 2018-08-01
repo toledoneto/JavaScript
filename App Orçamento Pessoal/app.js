@@ -89,6 +89,9 @@ class Db
 			// verificando índices removidos e pulando-os
 			if (expense === null) continue;
 
+			// adiciona o id no elemento
+			expense.id = i;
+
 			expenses.push(expense);
 
 		}
@@ -118,6 +121,13 @@ class Db
 		if (expense.cost != '') filteredExpenses = filteredExpenses.filter( exp => exp.cost == expense.cost);
 
 		return filteredExpenses;
+
+	}
+
+	delete(id)
+	{
+
+		localStorage.removeItem(id);
 
 	}
 
@@ -217,6 +227,29 @@ function showListExpenses(expenses = Array(), filter = false)
 		row.insertCell(1).innerHTML = expense.typeOf;
 		row.insertCell(2).innerHTML = expense.description;
 		row.insertCell(3).innerHTML = expense.cost;
+
+		// cria botão e lógica para exclusão do item
+		let btn = document.createElement("button");
+		
+		btn.className = 'btn btn-danger';
+		
+		btn.innerHTML = '<i class="fas fa-times"></i>';
+
+		btn.id = `id_expense_${expense.id}`;
+		
+		btn.onclick = function(){
+
+			let id = this.id.replace('id_expense_', '');
+
+			db.delete(id);
+
+			// após a remoção do item do LS, é necessário atualizar a pag
+			// para que uma nova consulta retorne a tabela correta
+			window.location.reload();
+
+		};
+		
+		row.insertCell(4).append(btn);
 
 	});
 
