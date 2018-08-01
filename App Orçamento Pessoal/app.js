@@ -91,13 +91,25 @@ function createExpense()
 		
 		db.save(expense);
 
+		document.getElementById('modalTitle').innerHTML = 'Registro inserido com sucesso';
+		document.getElementById('modalTitleDiv').className = 'modal-header text-success';
+		document.getElementById('modalContent').innerHTML = 'Despesa cadastrada com sucesso';
+		document.getElementById('modalBtn').innerHTML = 'Voltar';
+		document.getElementById('modalBtn').className = 'btn btn-success';
+
 		// um pouco de JQuery caso não haja erro no preenchimento do form
-		$('#saveSuccess').modal('show');
+		$('#modalRegisterExpense').modal('show');
 
 	} else {
 
+		document.getElementById('modalTitle').innerHTML = 'Erro no cadastro!';
+		document.getElementById('modalTitleDiv').className = 'modal-header text-danger';
+		document.getElementById('modalContent').innerHTML = 'Campos obrigatórios não preenchidos';
+		document.getElementById('modalBtn').innerHTML = 'Voltar e Corrigir';
+		document.getElementById('modalBtn').className = 'btn btn-danger';
+
 		// um pouco de JQuery caso haja erro no preenchimento do form
-		$('#saveError').modal('show');
+		$('#modalRegisterExpense').modal('show');
 
 	};
 
